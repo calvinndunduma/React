@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -25,6 +27,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Flux<ProductDto> getProductsInRange(double min, double max){
         return repository.findByPriceBetween(Range.closed(min,max));
+    }
+    @Override
+    public Flux<ProductDto> getProductsCreatedBetween(LocalDate startDate, LocalDate endDate) {
+        return repository.findAllByLocalDateBetween(startDate,endDate);
     }
     @Override
     public Mono<ProductDto> addProduct(Mono<ProductDto> productDtoMono){

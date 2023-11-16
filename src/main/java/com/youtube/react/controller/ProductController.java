@@ -5,9 +5,12 @@ import com.youtube.react.model.ProductDto;
 import com.youtube.react.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/product")
@@ -15,7 +18,7 @@ import reactor.core.publisher.Mono;
 @AllArgsConstructor
 public class ProductController {
     private ProductService productService;
-    @GetMapping("/get-all")
+    @GetMapping("/products")
     public Flux<Product> products(){
         return productService.getAllProduct();
     }
@@ -26,6 +29,11 @@ public class ProductController {
     @GetMapping("/product-range")
     public Flux<ProductDto> productRange(@RequestParam("min") double min, @RequestParam("max") double max){
         return productService.getProductsInRange(min, max);
+    }
+    @GetMapping("/product-range-time/start-date/{startDate}/end-date/{endDate}")
+    public Flux<ProductDto> productBetweenDate(@PathVariable("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                               @PathVariable("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate){
+        return productService.getProductsCreatedBetween(startDate,endDate);
     }
     @PostMapping("/create")
     public Mono<ProductDto> createProduct(@RequestBody Mono<ProductDto> productDtoMono){
