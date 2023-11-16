@@ -35,16 +35,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<ProductDto> addProduct(Mono<ProductDto> productDtoMono){
         return productDtoMono.map(AppUtils::dtoToEntity)
-                .flatMap(repository::insert) // one to many
+                .flatMap(repository::save) // one to many
                 .map(AppUtils::entityToDto); // one to one
     }
     @Override
-    public Mono<ProductDto> updateProduct(Mono<ProductDto> productDtoMono, String id){
+    public Mono<ProductDto> updateProduct(ProductDto product, String id){
         return repository.findById(id)
-                .flatMap(p -> productDtoMono.map(AppUtils::dtoToEntity))
-                .doOnNext(e -> e.setId(id))
-                .doOnNext(q -> q.setName(""))
-                .flatMap(repository::save)
+                .map(
+                        (p)->{
+                            p.setName(product.getName());
+                            p.setLocalDate(product.getLocalDate());
+                            p.setPrice(product.getPrice());
+                            p.setQuantity(product.getQuantity());
+                            return p;
+                        }).flatMap(repository::save) //p->repository.save(p)
                 .map(AppUtils::entityToDto);
     }
     @Override

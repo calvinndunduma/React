@@ -26,8 +26,8 @@ public class ProductController {
     public Mono<ProductDto> product(@PathVariable String id){
         return productService.getProduct(id);
     }
-    @GetMapping("/product-range")
-    public Flux<ProductDto> productRange(@RequestParam("min") double min, @RequestParam("max") double max){
+    @GetMapping("/product-range/minimum/{min}/maximum/{max}")
+    public Flux<ProductDto> productRange(@PathVariable("min") double min, @PathVariable("max") double max){
         return productService.getProductsInRange(min, max);
     }
     @GetMapping("/product-range-time/start-date/{startDate}/end-date/{endDate}")
@@ -40,7 +40,7 @@ public class ProductController {
         return productService.addProduct(productDtoMono);
     }
     @PutMapping("/update/{id}")
-    public Mono<ProductDto> updateProduct(@RequestBody Mono<ProductDto> productDtoMono, @PathVariable String id){
+    public Mono<ProductDto> updateProduct(@RequestBody ProductDto productDtoMono, @PathVariable String id){
         return productService.updateProduct(productDtoMono,id);
     }
     @DeleteMapping("/delete/{id}")
